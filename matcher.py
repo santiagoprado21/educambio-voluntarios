@@ -10,21 +10,85 @@ import pandas as pd
 from datetime import datetime, timedelta
 import sys
 import os
+import requests
 
-def load_tracking_data(tracking_file='voluntarios_tracking.json'):
-    """Cargar datos de tracking de voluntarios"""
+# URL del backend en Render
+BACKEND_URL = 'https://educambio-voluntarios.onrender.com'
+
+def load_tracking_data_from_api(backend_url=BACKEND_URL):
+    """Cargar datos de tracking desde la API de Render"""
+    try:
+        print(f"🔗 Conectando con el backend...")
+        print(f"   URL: {backend_url}")
+        
+        response = requests.get(f"{backend_url}/api/tracks", timeout=30)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('success') and 'data' in data:
+                tracking_records = data['data']
+                print(f"✅ {len(tracking_records)} registros de tracking obtenidos desde Render")
+                return tracking_records
+            else:
+                print(f"⚠️ Respuesta inesperada del backend")
+                return None
+        else:
+            print(f"❌ Error del backend: Status {response.status_code}")
+            return None
+            
+    except requests.exceptions.Timeout:
+        print(f"⚠️ Timeout conectando al backend (puede estar 'despertando'...)")
+        print(f"   Esperando 30 segundos más...")
+        try:
+            response = requests.get(f"{backend_url}/api/tracks", timeout=60)
+            if response.status_code == 200:
+                data = response.json()
+                if data.get('success') and 'data' in data:
+                    tracking_records = data['data']
+                    print(f"✅ {len(tracking_records)} registros de tracking obtenidos")
+                    return tracking_records
+        except Exception as e:
+            print(f"❌ Error después del segundo intento: {e}")
+            return None
+    except Exception as e:
+        print(f"❌ Error conectando con el backend: {e}")
+        return None
+
+def load_tracking_data_from_file(tracking_file='voluntarios_tracking.json'):
+    """Cargar datos de tracking desde archivo local (fallback)"""
     if not os.path.exists(tracking_file):
-        print(f"❌ Error: No se encuentra el archivo {tracking_file}")
         return None
     
     try:
         with open(tracking_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
-        print(f"✅ {len(data)} registros de tracking cargados")
+        print(f"✅ {len(data)} registros de tracking cargados desde archivo local")
         return data
     except Exception as e:
-        print(f"❌ Error cargando tracking: {e}")
+        print(f"❌ Error cargando tracking desde archivo: {e}")
         return None
+
+def load_tracking_data(backend_url=BACKEND_URL):
+    """Cargar datos de tracking (primero desde API, luego desde archivo local)"""
+    print("\n📥 Obteniendo tracking de voluntarios...")
+    
+    # Intentar primero desde la API
+    data = load_tracking_data_from_api(backend_url)
+    
+    # Si falla, intentar desde archivo local
+    if data is None:
+        print("\n⚠️ No se pudo obtener datos desde la API")
+        print("📂 Intentando cargar desde archivo local...")
+        data = load_tracking_data_from_file()
+    
+    if data is None:
+        print("\n❌ Error: No se pudieron cargar los datos de tracking")
+        print("\nOpciones:")
+        print("  1. Verifica que el backend esté activo:")
+        print(f"     {backend_url}/health")
+        print("  2. O asegúrate de tener el archivo 'voluntarios_tracking.json'")
+    
+    return data
 
 def load_donations_export(export_file):
     """Cargar exportación de suscripciones.co"""
@@ -215,7 +279,7 @@ def main():
     
     # Cargar datos
     print("\n" + "="*60)
-    tracking_data = load_tracking_data()
+    tracking_data = load_tracking_data(BACKEND_URL)
     if tracking_data is None:
         return
     

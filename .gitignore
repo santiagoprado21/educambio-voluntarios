@@ -35,6 +35,10 @@ resumen_voluntarios.csv
 tracking.csv
 voluntarios_tracking.csv
 donaciones_prueba.csv
+donaciones_test.csv
+donaciones_suscripciones_test.csv
+donaciones_*.csv
+Suscripciones.co*.csv
 
 # Variables de entorno
 .env
