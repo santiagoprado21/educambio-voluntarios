@@ -217,29 +217,124 @@ def match_donations(tracking_data, donations_df, email_column='email',
     return donations_df
 
 def generate_report(matched_df, output_file='donaciones_con_voluntarios.csv'):
-    """Generar reporte final"""
+    """Generar reporte final con análisis completo"""
     try:
         matched_df.to_csv(output_file, index=False, encoding='utf-8-sig')
-        print(f"\n✅ Reporte generado exitosamente: {output_file}")
+        print(f"\n✅ Reporte detallado generado: {output_file}")
         
-        # Resumen por voluntario
+        # Resumen por voluntario con análisis completo
         if 'codigo_voluntario' in matched_df.columns:
-            volunteer_summary = matched_df.groupby('codigo_voluntario').size().sort_values(ascending=False)
+            # Preparar datos
+            volunteer_data = matched_df[pd.notna(matched_df['codigo_voluntario'])].copy()
             
-            print("\n📊 Resumen por voluntario:")
-            print("="*50)
-            for volunteer, count in volunteer_summary.items():
-                if pd.notna(volunteer):
-                    print(f"  {volunteer}: {count} donaciones")
+            if len(volunteer_data) == 0:
+                print("\n⚠️ No hay donaciones con voluntarios asignados")
+                return True
             
-            # Guardar resumen
+            # Detectar columna de monto
+            amount_col = None
+            for col in ['amount', 'monto', 'valor', 'total']:
+                if col in volunteer_data.columns:
+                    amount_col = col
+                    break
+            
+            # Crear resumen completo
+            summary_data = []
+            
+            for volunteer in volunteer_data['codigo_voluntario'].unique():
+                volunteer_donations = volunteer_data[volunteer_data['codigo_voluntario'] == volunteer]
+                
+                # Estadísticas básicas
+                total_donations = len(volunteer_donations)
+                
+                # Estadísticas de monto (si existe columna)
+                if amount_col:
+                    amounts = pd.to_numeric(volunteer_donations[amount_col], errors='coerce')
+                    total_amount = amounts.sum()
+                    avg_amount = amounts.mean()
+                    max_amount = amounts.max()
+                else:
+                    total_amount = 0
+                    avg_amount = 0
+                    max_amount = 0
+                
+                # Fechas (si existen)
+                date_cols = [col for col in volunteer_donations.columns if 'date' in col.lower() or 'fecha' in col.lower()]
+                if date_cols:
+                    dates = pd.to_datetime(volunteer_donations[date_cols[0]], errors='coerce')
+                    first_date = dates.min()
+                    last_date = dates.max()
+                else:
+                    first_date = None
+                    last_date = None
+                
+                summary_data.append({
+                    'voluntario': volunteer,
+                    'total_donaciones': total_donations,
+                    'monto_total': total_amount,
+                    'monto_promedio': avg_amount,
+                    'donacion_maxima': max_amount,
+                    'primera_donacion': first_date,
+                    'ultima_donacion': last_date
+                })
+            
+            # Crear DataFrame del resumen
+            summary_df = pd.DataFrame(summary_data)
+            summary_df = summary_df.sort_values('monto_total', ascending=False)
+            
+            # Guardar resumen completo
             summary_file = 'resumen_voluntarios.csv'
-            volunteer_summary.to_csv(summary_file, header=['cantidad_donaciones'])
-            print(f"\n✅ Resumen por voluntario guardado en: {summary_file}")
+            summary_df.to_csv(summary_file, index=False, encoding='utf-8-sig')
+            print(f"\n✅ Resumen completo guardado en: {summary_file}")
+            
+            # Mostrar resumen en consola
+            print("\n📊 RESUMEN POR VOLUNTARIO:")
+            print("="*80)
+            
+            for _, row in summary_df.iterrows():
+                volunteer = row['voluntario']
+                count = int(row['total_donaciones'])
+                
+                if amount_col and row['monto_total'] > 0:
+                    total = f"${row['monto_total']:,.0f}"
+                    avg = f"${row['monto_promedio']:,.0f}"
+                    max_don = f"${row['donacion_maxima']:,.0f}"
+                    print(f"  🏆 {volunteer}:")
+                    print(f"     • {count} donaciones")
+                    print(f"     • Total: {total}")
+                    print(f"     • Promedio: {avg}")
+                    print(f"     • Donación máxima: {max_don}")
+                else:
+                    print(f"  🏆 {volunteer}: {count} donaciones")
+            
+            print("="*80)
+            
+            # Mostrar TOP 3
+            if len(summary_df) > 0:
+                print("\n🥇 TOP 3 VOLUNTARIOS:")
+                print("-"*80)
+                for idx, (_, row) in enumerate(summary_df.head(3).iterrows(), 1):
+                    emoji = ['🥇', '🥈', '🥉'][idx-1]
+                    volunteer = row['voluntario']
+                    count = int(row['total_donaciones'])
+                    
+                    if amount_col and row['monto_total'] > 0:
+                        total = f"${row['monto_total']:,.0f}"
+                        print(f"  {emoji} {volunteer}: {count} donaciones - {total}")
+                    else:
+                        print(f"  {emoji} {volunteer}: {count} donaciones")
+                print("-"*80)
+            
+            # Calcular tasa de conversión (si tenemos datos de tracking)
+            # Esta información vendría del backend
+            print("\n💡 Tip: Para ver la tasa de conversión (clicks vs donaciones),")
+            print("   visita: https://educambio-voluntarios.onrender.com/api/stats")
         
         return True
     except Exception as e:
         print(f"❌ Error generando reporte: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def main():

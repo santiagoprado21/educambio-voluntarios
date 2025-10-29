@@ -329,6 +329,7 @@ Si ves errores de CORS en la consola:
 - **`generar-enlaces.html`** - Herramienta para generar enlaces (uso local)
 - **`matcher.py`** - Script para matching de donaciones
 - **`requirements.txt`** - Dependencias de Python
+- **`ejemplo_donaciones_suscripciones.csv`** - Ejemplo con formato real de suscripciones.co
 
 ## ❓ Preguntas Frecuentes
 

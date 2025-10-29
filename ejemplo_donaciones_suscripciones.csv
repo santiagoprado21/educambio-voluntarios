@@ -1,0 +1,7 @@
+id,fullName,email,idNumber,phoneNumber,amount,status,createdAt,plan,quantity,variants,paymentDate,cardNumber,cardBrand
+"001",Ana Garcia,ana.garcia@test.com,1234567890,+57 300 1234567,50000,ACTIVE,"Wed Oct 29 2025 22:38:40 GMT+0000 (Coordinated Universal Time)",Donación libre,1,,2025-10-29T22:38:40.000Z,1234,VISA
+"002",Santiago Prado,spprado@test.com,9876543210,+57 301 9876543,75000,ACTIVE,"Wed Oct 29 2025 22:39:27 GMT+0000 (Coordinated Universal Time)",Donación libre,1,,2025-10-29T22:39:27.000Z,5678,MASTERCARD
+"003",Maria Gonzales,maria@test.com,5555555555,+57 302 5555555,30000,ACTIVE,"Wed Oct 29 2025 22:40:06 GMT+0000 (Coordinated Universal Time)",Donación libre,1,,2025-10-29T22:40:06.000Z,9012,VISA
+"004",Sofia Martinez,sofia.martinez@test.com,7777777777,+57 303 7777777,100000,ACTIVE,"Wed Oct 29 2025 22:40:31 GMT+0000 (Coordinated Universal Time)",Donación libre,1,,2025-10-29T22:40:31.000Z,3456,AMEX
+"005",Sin Voluntario,otrodonante@test.com,8888888888,+57 304 8888888,25000,ACTIVE,"Wed Oct 28 2025 10:00:00 GMT+0000 (Coordinated Universal Time)",Donación libre,1,,2025-10-28T10:00:00.000Z,7890,VISA
+

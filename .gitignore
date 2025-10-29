@@ -36,9 +36,11 @@ tracking.csv
 voluntarios_tracking.csv
 donaciones_prueba.csv
 donaciones_test.csv
-donaciones_suscripciones_test.csv
 donaciones_*.csv
 Suscripciones.co*.csv
+
+# Archivo de ejemplo - mantener en repo
+!ejemplo_donaciones_suscripciones.csv
 
 # Variables de entorno
 .env

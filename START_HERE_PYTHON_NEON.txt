@@ -50,6 +50,8 @@
    Se ve así:
    postgresql://usuario:password@ep-xxx-xxx.neon.tech/neondb?sslmode=require
 
+   postgresql://neondb_owner:npg_TW46pOGQbHIU@ep-purple-fire-adc6c84m-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+
 
 ▶ PASO 3: Configurar y probar (5 minutos)
 ────────────────────────────────────────────────────────────────────────────
@@ -183,8 +185,7 @@
    ✅ generar-enlaces.html .............. Generar enlaces (doble clic)
    ✅ backend-neon.py ................... Backend con Neon
    ✅ matcher.py ........................ Matching de donaciones
-   ✅ install-neon.bat .................. Instalador automático
-   ✅ test-neon.bat ..................... Probar backend
+   ✅ ejemplo_donaciones_suscripciones.csv .. Ejemplo formato real
 
 
 📄 PARA WEBFLOW (solo este):
