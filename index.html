@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educambio - Donaciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .volunteer-info {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .volunteer-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .volunteer-code {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        input[type="email"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="email"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 20px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>💚 Educambio</h1>
+            <p>Gracias por tu generosidad</p>
+        </div>
+
+        <div id="volunteerInfo" class="volunteer-info" style="display: none;">
+            <h3>Voluntario referido:</h3>
+            <span class="volunteer-code" id="volunteerCodeDisplay"></span>
+        </div>
+
+        <div id="successMessage" class="success-message">
+            ¡Información registrada! Serás redirigido en unos segundos...
+        </div>
+
+        <form id="donationForm">
+            <div class="form-group">
+                <label for="donorEmail">Tu correo electrónico *</label>
+                <input 
+                    type="email" 
+                    id="donorEmail" 
+                    name="donorEmail" 
+                    placeholder="ejemplo@correo.com"
+                    required
+                >
+                <span class="error" id="emailError">Por favor ingresa un correo válido</span>
+            </div>
+
+            <div class="form-group">
+                <label for="donorName">Tu nombre (opcional)</label>
+                <input 
+                    type="text" 
+                    id="donorName" 
+                    name="donorName" 
+                    placeholder="Nombre completo"
+                >
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">
+                Continuar a la donación
+            </button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px; color: #666;">Procesando...</p>
+            </div>
+
+            <p class="info-text">
+                📝 Tu información será utilizada únicamente para asociar tu donación con el voluntario que te refirió.
+            </p>
+        </form>
+    </div>
+
+    <script>
+        // URL de suscripciones.co (MODIFICAR CON LA URL REAL)
+        const SUSCRIPCIONES_URL = 'https://suscripciones.co/educambio/donar';
+        
+        // URL del backend para guardar las asociaciones (MODIFICAR CON TU URL)
+        const BACKEND_URL = 'http://localhost:3000/api/track';
+
+        // Obtener código de voluntario de la URL
+        function getVolunteerCode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('ref') || urlParams.get('voluntario') || urlParams.get('v');
+        }
+
+        // Guardar código en localStorage
+        function saveVolunteerCode(code) {
+            if (code) {
+                localStorage.setItem('educambio_volunteer_code', code);
+                localStorage.setItem('educambio_volunteer_timestamp', Date.now());
+            }
+        }
+
+        // Obtener código guardado
+        function getSavedVolunteerCode() {
+            return localStorage.getItem('educambio_volunteer_code');
+        }
+
+        // Mostrar información del voluntario
+        function displayVolunteerInfo() {
+            const code = getVolunteerCode() || getSavedVolunteerCode();
+            
+            if (code) {
+                saveVolunteerCode(code);
+                document.getElementById('volunteerInfo').style.display = 'block';
+                document.getElementById('volunteerCodeDisplay').textContent = code;
+            }
+        }
+
+        // Validar email
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Enviar datos al backend
+        async function trackDonation(data) {
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al guardar la información');
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error:', error);
+                // Continuar incluso si falla el tracking
+                return { success: true, fallback: true };
+            }
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('donationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const emailInput = document.getElementById('donorEmail');
+            const nameInput = document.getElementById('donorName');
+            const email = emailInput.value.trim();
+            const name = nameInput.value.trim();
+            const volunteerCode = getVolunteerCode() || getSavedVolunteerCode();
+
+            // Validar email
+            if (!isValidEmail(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                emailInput.focus();
+                return;
+            }
+
+            document.getElementById('emailError').style.display = 'none';
+
+            // Deshabilitar botón y mostrar loading
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            document.getElementById('loading').style.display = 'block';
+
+            // Preparar datos
+            const trackingData = {
+                email: email,
+                name: name,
+                volunteerCode: volunteerCode,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                referrer: document.referrer
+            };
+
+            // Guardar en localStorage como backup
+            const donations = JSON.parse(localStorage.getItem('educambio_donations') || '[]');
+            donations.push(trackingData);
+            localStorage.setItem('educambio_donations', JSON.stringify(donations));
+
+            // Enviar al backend
+            await trackDonation(trackingData);
+
+            // Mostrar mensaje de éxito
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('donationForm').style.opacity = '0.5';
+
+            // Redirigir después de 2 segundos
+            setTimeout(() => {
+                window.location.href = SUSCRIPCIONES_URL;
+            }, 2000);
+        });
+
+        // Inicializar
+        displayVolunteerInfo();
+
+        // Log para debugging (remover en producción)
+        console.log('Volunteer Code:', getVolunteerCode() || getSavedVolunteerCode());
+    </script>
+</body>
+</html>
+

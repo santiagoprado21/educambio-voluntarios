@@ -1,0 +1,170 @@
+==========================================
+  CONFIGURACIÓN DE NEON PARA EDUCAMBIO
+==========================================
+
+📌 PASO 1: CREAR CUENTA EN NEON
+--------------------------------
+
+1. Ve a: https://neon.tech
+2. Haz clic en "Sign Up"
+3. Crea tu cuenta (puedes usar GitHub, Google o email)
+
+
+📌 PASO 2: CREAR PROYECTO
+--------------------------
+
+1. Una vez dentro, haz clic en "Create a project"
+2. Nombre del proyecto: educambio
+3. Región: Elige la más cercana a tus usuarios
+   - Si estás en Colombia/Latinoamérica: US East (Ohio)
+   - Si estás en Europa: EU (Frankfurt)
+4. Haz clic en "Create project"
+
+
+📌 PASO 3: OBTENER CONNECTION STRING
+-------------------------------------
+
+1. En el dashboard de Neon verás tu nuevo proyecto
+2. Haz clic en tu proyecto "educambio"
+3. Ve a la sección "Connection Details"
+4. Copia el "Connection String" que se ve así:
+
+   postgresql://usuario:password@ep-xxx-xxx.neon.tech/neondb?sslmode=require
+
+5. GUÁRDALO EN UN LUGAR SEGURO (lo necesitarás en el siguiente paso)
+
+
+📌 PASO 4: CONFIGURAR EN TU COMPUTADORA (WINDOWS)
+--------------------------------------------------
+
+OPCIÓN A - PowerShell (Recomendado):
+
+1. Abre PowerShell
+2. Navega a la carpeta del proyecto:
+   cd "C:\Users\PC SANTI\Desktop\Educambio_Voluntarios"
+
+3. Configura la variable de entorno:
+   $env:DATABASE_URL = "postgresql://tu_usuario:tu_password@ep-xxx-xxx.neon.tech/neondb?sslmode=require"
+
+   ⚠️ IMPORTANTE: Reemplaza con tu connection string real de Neon
+
+4. Instala las dependencias:
+   pip install -r requirements.txt
+
+5. Inicia el servidor:
+   python backend-neon.py
+
+
+OPCIÓN B - CMD:
+
+1. Abre CMD
+2. Navega a la carpeta del proyecto:
+   cd "C:\Users\PC SANTI\Desktop\Educambio_Voluntarios"
+
+3. Configura la variable de entorno:
+   set DATABASE_URL=postgresql://tu_usuario:tu_password@ep-xxx-xxx.neon.tech/neondb?sslmode=require
+
+4. Instala las dependencias:
+   pip install -r requirements.txt
+
+5. Inicia el servidor:
+   python backend-neon.py
+
+
+OPCIÓN C - Variable permanente (Windows):
+
+1. Busca "Variables de entorno" en el menú inicio
+2. Haz clic en "Editar las variables de entorno del sistema"
+3. Botón "Variables de entorno"
+4. En "Variables de usuario", haz clic en "Nueva"
+   - Nombre: DATABASE_URL
+   - Valor: postgresql://tu_usuario:tu_password@ep-xxx-xxx.neon.tech/neondb?sslmode=require
+5. Haz clic en "Aceptar"
+6. Reinicia PowerShell/CMD
+7. Ahora puedes ejecutar: python backend-neon.py
+
+
+📌 PASO 5: VERIFICAR QUE FUNCIONA
+----------------------------------
+
+1. El servidor debería mostrar:
+   ✅ Base de datos inicializada correctamente
+   ✅ Servidor listo para recibir peticiones
+   🌐 Servidor corriendo en: http://localhost:3000
+
+2. Abre tu navegador en:
+   http://localhost:3000/health
+
+3. Deberías ver:
+   {"status":"ok","database":"connected"}
+
+4. Si ves esto, ¡FUNCIONA! 🎉
+
+
+📌 PASO 6: DESPLEGAR EN PRODUCCIÓN (RENDER)
+--------------------------------------------
+
+1. Ve a: https://render.com
+2. Crea cuenta y conecta GitHub
+3. Sube tu código a GitHub
+4. En Render: "New +" → "Web Service"
+5. Selecciona tu repositorio
+6. Configuración:
+   - Name: educambio-backend
+   - Environment: Python 3
+   - Build Command: pip install -r requirements.txt
+   - Start Command: python backend-neon.py
+7. Agrega variable de entorno:
+   - Key: DATABASE_URL
+   - Value: (tu connection string de Neon)
+8. Clic en "Create Web Service"
+9. Espera 5-10 minutos
+10. Copia la URL que te dan
+
+
+📌 SOLUCIÓN DE PROBLEMAS
+-------------------------
+
+PROBLEMA: "psycopg2 no se puede instalar"
+SOLUCIÓN: Usa psycopg2-binary en su lugar:
+  pip install psycopg2-binary==2.9.9
+
+PROBLEMA: "Database connection failed"
+SOLUCIÓN: 
+  - Verifica que copiaste bien el connection string
+  - Revisa que Neon no esté en pausa (el plan gratuito pausa después de inactividad)
+  - Reactiva el proyecto desde el dashboard de Neon
+
+PROBLEMA: "SSL connection error"
+SOLUCIÓN: Asegúrate que tu connection string termine con ?sslmode=require
+
+PROBLEMA: El servidor inicia pero no puedo acceder
+SOLUCIÓN: 
+  - Verifica que estés usando http://localhost:3000 (no https)
+  - Revisa el firewall de Windows
+  - Intenta con 127.0.0.1:3000 en lugar de localhost
+
+
+📌 LÍMITES DEL PLAN GRATUITO DE NEON
+-------------------------------------
+
+✅ Hasta 3 proyectos
+✅ 10 GB de almacenamiento por proyecto
+✅ 100 horas de compute por mes
+⚠️ Se pausa después de 5 minutos de inactividad (se reactiva automáticamente)
+
+Para Educambio, esto es MÁS QUE SUFICIENTE.
+
+
+📌 CONTACTO Y AYUDA
+-------------------
+
+Si tienes problemas:
+1. Revisa los logs en la terminal
+2. Verifica el dashboard de Neon
+3. Comprueba que la variable DATABASE_URL esté bien configurada
+
+
+¡ÉXITO CON TU IMPLEMENTACIÓN! 💚
+==========================================
+

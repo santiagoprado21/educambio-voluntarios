@@ -1,0 +1,273 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                  🚀 INICIO RÁPIDO: PYTHON + NEON + WEBFLOW                  ║
+║                                                                              ║
+║                         Educambio - Tracking de Voluntarios                  ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  RESPUESTA RÁPIDA A TU PREGUNTA
+═══════════════════════════════════════════════════════════════════════════════
+
+❓ "¿Para qué es generar-enlaces.html si en Webflow solo puedo colocar 
+    un embedded code?"
+
+✅ RESPUESTA:
+
+   generar-enlaces.html NO va en Webflow.
+   
+   Es una herramienta que TÚ usas en tu computadora para crear los enlaces
+   de tus voluntarios. Simplemente haces doble clic en el archivo, generas
+   los enlaces, y se los envías a tus voluntarios.
+   
+   Lo que SÍ va en Webflow (como embedded code) es: index.html
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  COMANDOS RÁPIDOS - COPIA Y PEGA
+═══════════════════════════════════════════════════════════════════════════════
+
+▶ PASO 1: Instalar (5 minutos)
+────────────────────────────────────────────────────────────────────────────
+
+   En PowerShell:
+
+   cd "C:\Users\PC SANTI\Desktop\Educambio_Voluntarios"
+   
+   pip install Flask Flask-CORS psycopg2-binary pandas openpyxl
+
+
+▶ PASO 2: Crear cuenta en Neon (5 minutos)
+────────────────────────────────────────────────────────────────────────────
+
+   1. Ve a: https://neon.tech
+   2. Crea cuenta (gratis)
+   3. Crea proyecto "educambio"
+   4. Copia el "Connection String"
+   
+   Se ve así:
+   postgresql://usuario:password@ep-xxx-xxx.neon.tech/neondb?sslmode=require
+
+
+▶ PASO 3: Configurar y probar (5 minutos)
+────────────────────────────────────────────────────────────────────────────
+
+   En PowerShell:
+
+   $env:DATABASE_URL = "PEGA_AQUI_TU_CONNECTION_STRING_DE_NEON"
+   
+   python backend-neon.py
+
+   Si sale esto, ¡FUNCIONA!:
+   ✅ Base de datos inicializada correctamente
+   ✅ Servidor listo para recibir peticiones
+   🌐 Servidor corriendo en: http://localhost:3000
+
+
+▶ PASO 4: Verificar que funciona
+────────────────────────────────────────────────────────────────────────────
+
+   Abre tu navegador en:
+   http://localhost:3000/health
+
+   Deberías ver:
+   {"status":"ok","database":"connected"}
+
+
+▶ PASO 5: Generar enlaces para voluntarios (5 minutos)
+────────────────────────────────────────────────────────────────────────────
+
+   1. En el Explorador de archivos, busca:
+      generar-enlaces.html
+   
+   2. Doble clic para abrirlo
+   
+   3. Ingresa:
+      - URL Base: https://educambio.com (tu sitio real)
+      - Voluntarios (uno por línea):
+        MARIA, María González
+        JUAN123, Juan Pérez
+        PEDRO, Pedro López
+   
+   4. Clic en "Generar Enlaces"
+   
+   5. Copia cada enlace y envíalo a cada voluntario
+
+
+▶ PASO 6: Integrar en Webflow (10 minutos)
+────────────────────────────────────────────────────────────────────────────
+
+   1. Abre: index.html en un editor de texto
+   
+   2. Busca y edita línea 251:
+      const SUSCRIPCIONES_URL = 'TU_URL_REAL_DE_SUSCRIPCIONES_CO';
+   
+   3. Busca y edita línea 254:
+      const BACKEND_URL = 'http://localhost:3000/api/track';
+      (después lo cambiarás a la URL de producción)
+   
+   4. Copia TODO el contenido del archivo
+   
+   5. En Webflow:
+      - Agrega elemento "Embed"
+      - Pega el código
+      - Publica
+   
+   ¡LISTO! Ya funciona localmente.
+
+
+▶ PASO 7: Desplegar a producción (20 minutos)
+────────────────────────────────────────────────────────────────────────────
+
+   A. Despliega el backend en Render:
+   
+      1. Ve a: https://render.com
+      2. Crea cuenta (gratis)
+      3. "New +" → "Web Service"
+      4. Conecta con GitHub (sube tu código primero)
+      5. Configuración:
+         - Build Command: pip install -r requirements.txt
+         - Start Command: python backend-neon.py
+      6. Agrega variable de entorno:
+         - Key: DATABASE_URL
+         - Value: TU_CONNECTION_STRING_DE_NEON
+      7. "Create Web Service"
+      8. Espera 5-10 minutos
+      9. Copia la URL (ej: https://educambio-backend.onrender.com)
+   
+   B. Actualiza Webflow:
+   
+      1. Edita index.html línea 254:
+         const BACKEND_URL = 'https://educambio-backend.onrender.com/api/track';
+      
+      2. Vuelve a copiar todo index.html
+      
+      3. Actualiza el embed en Webflow
+      
+      4. Publica
+
+
+▶ PASO 8: Hacer matching (cada semana/mes)
+────────────────────────────────────────────────────────────────────────────
+
+   1. Exporta donaciones desde suscripciones.co
+      Guarda como: donaciones.csv
+   
+   2. En PowerShell:
+      
+      cd "C:\Users\PC SANTI\Desktop\Educambio_Voluntarios"
+      python matcher.py donaciones.csv
+   
+   3. Abre el archivo generado:
+      resumen_voluntarios.csv
+   
+   ¡Ya tienes el reporte de cuántas donaciones generó cada voluntario!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  ARCHIVOS IMPORTANTES
+═══════════════════════════════════════════════════════════════════════════════
+
+📄 DOCUMENTACIÓN (lee estos):
+   
+   ✅ GUIA_PYTHON_NEON.md ............... Guía completa paso a paso
+   ✅ FLUJO_COMPLETO_VISUAL.txt ......... Diagramas del sistema
+   ✅ RESUMEN_EJECUTIVO.md .............. Resumen de 5 minutos
+   ✅ CONFIG_NEON.txt ................... Configuración de Neon
+
+
+📄 HERRAMIENTAS (usas estos):
+   
+   ✅ generar-enlaces.html .............. Generar enlaces (doble clic)
+   ✅ backend-neon.py ................... Backend con Neon
+   ✅ matcher.py ........................ Matching de donaciones
+   ✅ install-neon.bat .................. Instalador automático
+   ✅ test-neon.bat ..................... Probar backend
+
+
+📄 PARA WEBFLOW (solo este):
+   
+   ✅ index.html ........................ Formulario (embedded code)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  FLUJO SIMPLIFICADO
+═══════════════════════════════════════════════════════════════════════════════
+
+   1. TÚ generas enlaces con generar-enlaces.html
+      ↓
+   2. Voluntarios comparten sus enlaces
+      ↓
+   3. Donantes hacen clic y llenan formulario (index.html en Webflow)
+      ↓
+   4. Datos se guardan en Neon automáticamente
+      ↓
+   5. Donantes son redirigidos a suscripciones.co y donan
+      ↓
+   6. TÚ exportas donaciones desde suscripciones.co
+      ↓
+   7. TÚ ejecutas: python matcher.py donaciones.csv
+      ↓
+   8. ¡REPORTE LISTO! Ya sabes cuántas donaciones generó cada voluntario
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  COSTOS
+═══════════════════════════════════════════════════════════════════════════════
+
+   ✅ Neon (base de datos) ............. GRATIS (hasta 10GB)
+   ✅ Render (servidor) ................ GRATIS (750 horas/mes)
+   ✅ Python ........................... GRATIS (software libre)
+   ⚠️  Webflow ......................... Depende de tu plan actual
+   
+   Total: GRATIS (excepto Webflow que ya tienes)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  AYUDA
+═══════════════════════════════════════════════════════════════════════════════
+
+   ❓ ¿Algo no funciona?
+   
+      1. Lee: GUIA_PYTHON_NEON.md (sección Troubleshooting)
+      2. Revisa la consola del navegador (F12)
+      3. Revisa los logs en la terminal donde corre el backend
+   
+   ❓ ¿No entiendes cómo funciona?
+   
+      Lee: FLUJO_COMPLETO_VISUAL.txt
+      (tiene diagramas visuales super claros)
+   
+   ❓ ¿Necesitas configurar Neon?
+   
+      Lee: CONFIG_NEON.txt
+      (instrucciones detalladas de Neon)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════
+
+   [ ] Instalé Python y dependencias
+   [ ] Creé cuenta en Neon
+   [ ] Copié Connection String de Neon
+   [ ] Configuré DATABASE_URL
+   [ ] Probé backend localmente (http://localhost:3000/health)
+   [ ] Edité URLs en index.html
+   [ ] Probé el formulario localmente
+   [ ] Generé enlaces con generar-enlaces.html
+   [ ] Integré index.html en Webflow
+   [ ] Desplegué backend en Render
+   [ ] Actualicé BACKEND_URL en Webflow con URL de producción
+   [ ] Hice donación de prueba completa
+   [ ] Probé matcher.py con CSV de ejemplo
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                            ¡ÉXITO! 💚
+
+═══════════════════════════════════════════════════════════════════════════════
+

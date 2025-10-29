@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Enlaces para Voluntarios - Educambio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .form-section {
+            background: #f8f9ff;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="url"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .link-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .link-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .volunteer-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .volunteer-code {
+            color: #667eea;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .link-url {
+            background: #f8f9ff;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .btn-copy {
+            padding: 8px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-copy:hover {
+            background: #218838;
+        }
+
+        .copied {
+            background: #218838 !important;
+        }
+
+        .export-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .help-text {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .example {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .example strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Generador de Enlaces</h1>
+        <p class="subtitle">Crea enlaces personalizados para tus voluntarios</p>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="baseUrl">URL Base de tu sitio web:</label>
+                <input 
+                    type="url" 
+                    id="baseUrl" 
+                    placeholder="https://educambio.com"
+                    value="https://educambio.com"
+                >
+                <p class="help-text">Esta es la URL donde está alojada tu landing page (index.html)</p>
+            </div>
+
+            <div class="form-group">
+                <label for="volunteers">Lista de Voluntarios:</label>
+                <textarea 
+                    id="volunteers" 
+                    rows="8" 
+                    style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;"
+                    placeholder="Ingresa un voluntario por línea en formato: Código, Nombre&#10;&#10;Ejemplo:&#10;MARIA, María González&#10;JUAN123, Juan Pérez&#10;VOL001, Pedro Rodríguez"
+                ></textarea>
+                <p class="help-text">Formato: CODIGO, Nombre (un voluntario por línea)</p>
+            </div>
+
+            <div class="example">
+                <strong>💡 Ejemplo:</strong><br>
+                MARIA, María González<br>
+                JUAN123, Juan Pérez<br>
+                VOL001, Pedro Rodríguez
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="btn" onclick="generateLinks()">Generar Enlaces</button>
+                <button class="btn btn-secondary" onclick="clearForm()">Limpiar</button>
+            </div>
+        </div>
+
+        <div id="results" class="results">
+            <h2 style="color: #333; margin-bottom: 20px;">📋 Enlaces Generados</h2>
+            <div id="linksList"></div>
+
+            <div class="export-buttons">
+                <button class="btn" onclick="exportCSV()">📥 Exportar CSV</button>
+                <button class="btn btn-secondary" onclick="exportText()">📄 Exportar Texto</button>
+                <button class="btn btn-secondary" onclick="copyAll()">📋 Copiar Todos</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let generatedLinks = [];
+
+        function generateLinks() {
+            const baseUrl = document.getElementById('baseUrl').value.trim();
+            const volunteersText = document.getElementById('volunteers').value.trim();
+
+            if (!baseUrl) {
+                alert('Por favor ingresa la URL base');
+                return;
+            }
+
+            if (!volunteersText) {
+                alert('Por favor ingresa al menos un voluntario');
+                return;
+            }
+
+            // Asegurar que la URL no termine con /
+            const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+
+            // Parsear voluntarios
+            const lines = volunteersText.split('\n');
+            generatedLinks = [];
+
+            const linksList = document.getElementById('linksList');
+            linksList.innerHTML = '';
+
+            lines.forEach((line, index) => {
+                line = line.trim();
+                if (!line) return;
+
+                // Separar código y nombre
+                const parts = line.split(',');
+                const code = parts[0]?.trim();
+                const name = parts[1]?.trim() || code;
+
+                if (!code) return;
+
+                const url = `${cleanBaseUrl}/?ref=${encodeURIComponent(code)}`;
+
+                generatedLinks.push({
+                    code: code,
+                    name: name,
+                    url: url
+                });
+
+                // Crear elemento visual
+                const linkItem = document.createElement('div');
+                linkItem.className = 'link-item';
+                linkItem.innerHTML = `
+                    <div class="volunteer-name">${name}</div>
+                    <div class="volunteer-code">Código: ${code}</div>
+                    <div class="link-url">${url}</div>
+                    <button class="btn-copy" onclick="copyLink(${index}, this)">
+                        📋 Copiar Enlace
+                    </button>
+                `;
+
+                linksList.appendChild(linkItem);
+            });
+
+            if (generatedLinks.length > 0) {
+                document.getElementById('results').style.display = 'block';
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('No se pudo generar ningún enlace. Verifica el formato.');
+            }
+        }
+
+        function copyLink(index, button) {
+            const link = generatedLinks[index];
+            navigator.clipboard.writeText(link.url).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✅ ¡Copiado!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function copyAll() {
+            let text = '';
+            generatedLinks.forEach(link => {
+                text += `${link.name} (${link.code}): ${link.url}\n`;
+            });
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Todos los enlaces copiados al portapapeles');
+            });
+        }
+
+        function exportCSV() {
+            let csv = 'Código,Nombre,Enlace\n';
+            generatedLinks.forEach(link => {
+                csv += `"${link.code}","${link.name}","${link.url}"\n`;
+            });
+
+            downloadFile(csv, 'enlaces_voluntarios.csv', 'text/csv');
+        }
+
+        function exportText() {
+            let text = 'ENLACES DE VOLUNTARIOS - EDUCAMBIO\n';
+            text += '='.repeat(60) + '\n\n';
+            
+            generatedLinks.forEach(link => {
+                text += `Voluntario: ${link.name}\n`;
+                text += `Código: ${link.code}\n`;
+                text += `Enlace: ${link.url}\n`;
+                text += '-'.repeat(60) + '\n\n';
+            });
+
+            downloadFile(text, 'enlaces_voluntarios.txt', 'text/plain');
+        }
+
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type: type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function clearForm() {
+            document.getElementById('volunteers').value = '';
+            document.getElementById('results').style.display = 'none';
+            generatedLinks = [];
+        }
+    </script>
+</body>
+</html>
+

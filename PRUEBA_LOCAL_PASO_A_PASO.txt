@@ -1,0 +1,315 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                    🧪 PRUEBA LOCAL - PASO A PASO                            ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Ya tienes:
+  ✅ Base de datos Neon configurada
+  ✅ URLs de voluntarios generadas
+  ✅ index.html publicado en Webflow
+
+Ahora vamos a probar TODO el flujo:
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASO 1: INICIAR EL BACKEND LOCAL
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Abre PowerShell
+
+2. Ve a la carpeta del proyecto:
+   
+   cd "C:\Users\PC SANTI\Desktop\Educambio_Voluntarios"
+
+3. Configura la variable de entorno (usa tu Connection String):
+   
+   $env:DATABASE_URL = "postgresql://neondb_owner:npg_TW46pOGQbHIU@ep-purple-fire-adc6c84m-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+
+4. Inicia el backend:
+   
+   python backend-neon.py
+
+5. Deberías ver:
+   
+   ✅ Base de datos inicializada correctamente
+   ✅ Servidor listo para recibir peticiones
+   🌐 Servidor corriendo en: http://localhost:3000
+
+   ⚠️ IMPORTANTE: Deja esta ventana de PowerShell ABIERTA.
+                   El servidor debe seguir corriendo.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASO 2: VERIFICAR QUE EL BACKEND FUNCIONA
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Abre tu navegador
+
+2. Ve a: http://localhost:3000/health
+
+3. Deberías ver:
+   
+   {"status":"ok","message":"Backend de tracking funcionando correctamente","database":"connected"}
+
+   ✅ Si ves "database":"connected" → ¡PERFECTO!
+   ❌ Si ves "database":"error" → Verifica tu Connection String
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASO 3: CONFIGURAR index.html PARA PRUEBAS LOCALES
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Abre: index.html en un editor de texto (Notepad++, VSCode, etc)
+
+2. Busca la línea 254 (aprox) que dice:
+   
+   const BACKEND_URL = 'http://localhost:3000/api/track';
+
+3. Asegúrate que esté apuntando a localhost (para pruebas locales)
+
+4. La línea 251 debería tener:
+   
+   const SUSCRIPCIONES_URL = 'https://suscripciones.co/educambio/donar';
+   
+   (o tu URL real de suscripciones)
+
+5. Guarda el archivo
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASO 4: PROBAR EL FORMULARIO LOCALMENTE
+═══════════════════════════════════════════════════════════════════════════════
+
+Ahora vamos a simular que alguien hace clic en el enlace de un voluntario:
+
+1. Abre una nueva pestaña en tu navegador
+
+2. Abre el archivo index.html con una URL de prueba:
+   
+   OPCIÓN A - Arrastra index.html al navegador y agrega manualmente:
+   
+   file:///C:/Users/PC%20SANTI/Desktop/Educambio_Voluntarios/index.html?ref=MARIA
+   
+   (Reemplaza MARIA con el código de uno de tus voluntarios de prueba)
+
+   OPCIÓN B - Usa un servidor local simple (mejor):
+   
+   En PowerShell (NUEVA VENTANA, no cierres la del backend):
+   
+   cd "C:\Users\PC SANTI\Desktop\Educambio_Voluntarios"
+   python -m http.server 8000
+   
+   Luego ve a: http://localhost:8000/index.html?ref=MARIA
+
+3. Deberías ver:
+   
+   ┌─────────────────────────────────────┐
+   │    💚 Educambio                     │
+   │    Gracias por tu generosidad       │
+   │                                     │
+   │ Voluntario referido: MARIA          │  ← ¡Debe aparecer el código!
+   │                                     │
+   │ [Tu correo electrónico]             │
+   │ [Tu nombre (opcional)]              │
+   │                                     │
+   │ [Continuar a la donación]           │
+   └─────────────────────────────────────┘
+
+4. Llena el formulario:
+   
+   Email: prueba@test.com
+   Nombre: Juan Prueba
+
+5. Haz clic en "Continuar a la donación"
+
+6. Si todo funciona:
+   
+   ✅ Verás un mensaje: "¡Información registrada!"
+   ✅ Serás redirigido a suscripciones.co (puedes cancelar)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASO 5: VERIFICAR QUE SE GUARDÓ EN LA BASE DE DATOS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Ve a tu navegador
+
+2. Abre: http://localhost:3000/api/tracks
+
+3. Deberías ver algo como:
+   
+   {
+     "success": true,
+     "count": 1,
+     "data": [
+       {
+         "id": 1,
+         "email": "prueba@test.com",
+         "name": "Juan Prueba",
+         "volunteerCode": "MARIA",
+         "timestamp": "2025-10-29T...",
+         ...
+       }
+     ]
+   }
+
+   ✅ Si ves tu email y el código del voluntario → ¡FUNCIONA PERFECTO!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASO 6: VERIFICAR EN NEON (OPCIONAL)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Ve a: https://console.neon.tech
+
+2. Selecciona tu proyecto "educambio"
+
+3. Ve a "SQL Editor"
+
+4. Ejecuta:
+   
+   SELECT * FROM volunteer_tracking;
+
+5. Deberías ver tu registro de prueba
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASO 7: PROBAR CON DIFERENTES VOLUNTARIOS
+═══════════════════════════════════════════════════════════════════════════════
+
+Repite el PASO 4 con diferentes códigos:
+
+http://localhost:8000/index.html?ref=JUAN123
+http://localhost:8000/index.html?ref=PEDRO
+
+Usa diferentes emails cada vez:
+- prueba1@test.com
+- prueba2@test.com
+- etc.
+
+Luego verifica que todos se guarden:
+http://localhost:3000/api/tracks
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASO 8: PROBAR EL MATCHER
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Exporta los datos de prueba:
+   
+   Abre: http://localhost:3000/api/export/csv
+   
+   Se descargará: voluntarios_tracking.csv
+
+2. Ahora simula que tienes donaciones de suscripciones.co.
+   
+   Crea un archivo: donaciones_prueba.csv
+   
+   Contenido:
+   email,nombre,monto,fecha
+   prueba@test.com,Juan Prueba,50000,2025-10-29
+   prueba1@test.com,María Test,30000,2025-10-29
+   prueba2@test.com,Pedro Test,100000,2025-10-28
+
+3. Ejecuta el matcher:
+   
+   python matcher.py donaciones_prueba.csv
+
+4. Deberías ver:
+   
+   ✅ Matches encontrados: 3 (100%)
+   
+   📊 Resumen por voluntario:
+   MARIA: 1 donación
+   JUAN123: 1 donación
+   PEDRO: 1 donación
+
+5. Se generan dos archivos:
+   - donaciones_con_voluntarios.csv
+   - resumen_voluntarios.csv
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PASO 9: PROBAR CON WEBFLOW
+═══════════════════════════════════════════════════════════════════════════════
+
+Si ya publicaste en Webflow:
+
+1. Asegúrate que tu backend esté corriendo (PASO 1)
+
+2. Ve a tu página en Webflow con un código:
+   
+   https://tu-sitio.webflow.io/?ref=MARIA
+
+3. Llena el formulario
+
+4. Verifica que se guarde:
+   http://localhost:3000/api/tracks
+
+
+⚠️ IMPORTANTE PARA WEBFLOW:
+
+   Si tu sitio está en Webflow y el backend en localhost, tendrás
+   problemas de CORS (no podrá conectarse).
+   
+   Para producción necesitas:
+   1. Desplegar el backend en Render
+   2. Actualizar BACKEND_URL en index.html
+   3. Volver a publicar en Webflow
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ "No se muestra el código del voluntario"
+   → Verifica que la URL tenga ?ref=CODIGO al final
+
+❌ "Error al guardar" en el formulario
+   → Verifica que el backend esté corriendo
+   → Abre F12 en el navegador y mira la consola
+
+❌ "database":"disconnected" en /health
+   → Verifica tu Connection String de Neon
+   → Asegúrate que copiaste todo el string completo
+
+❌ "CORS error" en la consola del navegador
+   → Normal si estás en Webflow y backend en localhost
+   → Solución: Despliega backend en Render
+
+❌ El matcher no encuentra matches
+   → Verifica que los emails sean EXACTAMENTE iguales
+   → Revisa que el CSV tenga la columna "email"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  RESUMEN DE PRUEBA EXITOSA
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ Backend corriendo en http://localhost:3000
+✅ /health muestra "database":"connected"
+✅ Formulario muestra el código del voluntario
+✅ Datos se guardan al enviar el formulario
+✅ /api/tracks muestra los registros
+✅ Matcher genera reportes correctamente
+
+¡Si todo esto funciona, tu sistema está listo para producción!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+  PRÓXIMO PASO: PRODUCCIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Despliega backend en Render (lee GUIA_PYTHON_NEON.md PASO 7)
+2. Actualiza BACKEND_URL en index.html con la URL de Render
+3. Vuelve a publicar en Webflow
+4. ¡Listo para usar!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                           ¡BUENA SUERTE! 💚
+
+═══════════════════════════════════════════════════════════════════════════════
+
